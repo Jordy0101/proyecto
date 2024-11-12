@@ -1,0 +1,13 @@
+/* src/components/CameraComponent/camera.css */
+.camera-container {
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  .camera-image {
+    max-width: 100%;
+    height: auto;
+    margin-top: 20px;
+    border: 1px solid #ccc;
+  }
+  

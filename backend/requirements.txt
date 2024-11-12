@@ -1,0 +1,14 @@
+fastapi
+uvicorn
+pillow
+google-generativeai
+pygame
+gtts
+langdetect
+rich
+docx
+html2text
+keyboard
+python-docx
+genai
+opencv-python
