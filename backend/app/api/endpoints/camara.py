@@ -10,7 +10,6 @@ from app.services.camara_service import CameraService
 router = APIRouter()
 camera_service = None  # Definir la cámara de forma global para controlarla
 
-# Endpoint para capturar una foto y guardarla en el servidor
 @router.get("/capturar_foto")
 async def capturar_foto():
     global camera_service
@@ -19,14 +18,13 @@ async def capturar_foto():
     try:
         img = camera_service.capturarFoto()
         if img:
-            img_path = "captura.jpg"  # Ruta para guardar la imagen capturada
+            img_path = "captura.jpg"
             img.save(img_path)
             return {"message": "Foto capturada", "image_path": img_path}
         return {"error": "Error al capturar la foto"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al capturar la foto: {str(e)}")
 
-# Endpoint para procesar una imagen en la cámara
 @router.post("/capturar_imagen")
 async def capturar_imagen():
     global camera_service
@@ -37,8 +35,7 @@ async def capturar_imagen():
         return {"message": "Imagen capturada correctamente."}
     except Exception as e:
         return {"error": str(e)}
-
-# Endpoint para recibir y guardar una imagen en base64
+    
 @router.post("/guardar")
 async def guardar_imagen(request: Request):
     try:
@@ -52,11 +49,9 @@ async def guardar_imagen(request: Request):
         img = Image.open(BytesIO(img_data))
         img.save("captura.jpg")
         return JSONResponse(content={"message": "Imagen guardada correctamente"}, status_code=200)
-    
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al guardar la imagen: {str(e)}")
 
-# Endpoint para cerrar la cámara y liberar los recursos
 @router.post("/cerrar")
 async def cerrar_camara():
     global camera_service
@@ -66,20 +61,17 @@ async def cerrar_camara():
         return {"message": "Cámara cerrada y recursos liberados"}
     return {"message": "La cámara ya estaba cerrada"}
 
-
-
 @router.get("/abrir-camara")
 async def abrir_camara():
     global camera_service
     if camera_service:
         return {"message": "La cámara ya está en ejecución"}
-    
-    # Iniciar la cámara en un hilo separado para no bloquear FastAPI
+
     def iniciar():
         window = tk.Tk()
         global camera_service
         camera_service = CameraService(window, "Cámara con Tkinter")
         camera_service.start_camera()
-    
+
     threading.Thread(target=iniciar, daemon=True).start()  # Usar daemon=True para que el hilo termine cuando el servidor FastAPI termine
     return {"message": "Interfaz de cámara abierta"}
