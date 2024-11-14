@@ -1,16 +1,17 @@
+
 import cv2
 from PIL import Image, ImageTk
 import tkinter as tk
 import threading
-from io import BytesIO
-import base64
 
 class CameraService:
     
-    def __init__(self, window, window_title):
+    def __init__(self, window, window_title, width=800, height=600):
         self.window = window
         self.window.title(window_title)
-        self.window.attributes('-fullscreen', True)
+        
+        # Establece el tamaño de la ventana
+        self.window.geometry(f"{width}x{height}")  # Ancho x Alto
 
         # Inicializa la cámara por defecto
         self.vid = cv2.VideoCapture(0)
@@ -20,6 +21,9 @@ class CameraService:
         # Crear el Label para la transmisión de la cámara
         self.canvas = tk.Label(window)
         self.canvas.pack(fill=tk.BOTH, expand=True)
+
+        # Iniciar la cámara en un hilo separado para no bloquear la UI
+        threading.Thread(target=self.start_camera, daemon=True).start()
 
         # Añadir botones personalizados
         self.add_buttons()
@@ -32,10 +36,10 @@ class CameraService:
 
     def start_camera(self):
         """Este método se encarga de iniciar la interfaz gráfica de la cámara"""
-        # Llama a la función de actualización de la cámara
         self.update_camera_feed()
 
     def update_camera_feed(self):
+        """Captura los frames de la cámara y los actualiza en la interfaz"""
         ret, frame = self.vid.read()
         if ret:
             # Convertir el frame a RGB
