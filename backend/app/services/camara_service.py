@@ -1,4 +1,3 @@
-
 import cv2
 from PIL import Image, ImageTk
 import tkinter as tk
@@ -22,9 +21,6 @@ class CameraService:
         self.canvas = tk.Label(window)
         self.canvas.pack(fill=tk.BOTH, expand=True)
 
-        # Iniciar la cámara en un hilo separado para no bloquear la UI
-        threading.Thread(target=self.start_camera, daemon=True).start()
-
         # Añadir botones personalizados
         self.add_buttons()
 
@@ -32,6 +28,10 @@ class CameraService:
         self.window.bind('<Escape>', lambda e: self.exit())
         self.window.bind('<KeyPress>', self.on_key_press)
         self.window.bind("<Configure>", self.on_resize)  # Evento de cambio de tamaño
+
+        # Iniciar la cámara en un hilo separado para no bloquear la UI
+        threading.Thread(target=self.start_camera, daemon=True).start()
+
         self.window.mainloop()
 
     def start_camera(self):
@@ -74,3 +74,8 @@ class CameraService:
             self.vid.release()  # Libera la cámara
             print("Cámara cerrada correctamente.")
         self.window.destroy()
+
+# Ejemplo de uso
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = CameraService(root, "Cámara con Tkinter", width=800, height=600)  # Tamaño ajustado a 800x600
