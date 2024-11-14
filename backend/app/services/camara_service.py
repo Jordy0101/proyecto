@@ -17,15 +17,9 @@ class CameraService:
         if not self.vid.isOpened():
             raise Exception("No se pudo abrir la cámara.")
 
-        # Configurar el fondo de pantalla
-        self.image_label = tk.Label(window)
-        self.image_label.pack(fill=tk.BOTH, expand=True)
-        self.original_image = Image.open("background.jpeg")
-        self.update_image()  # Ajustar la imagen de fondo según el tamaño inicial
-
         # Crear el Label para la transmisión de la cámara
         self.canvas = tk.Label(window)
-        self.canvas.place(x=0, y=60)
+        self.canvas.pack(fill=tk.BOTH, expand=True)
 
         # Añadir botones personalizados
         self.add_buttons()
@@ -56,21 +50,13 @@ class CameraService:
         # Programa otra actualización en 10 ms
         self.window.after(10, self.update_camera_feed)
 
-    def update_image(self):
-        # Redimensiona y muestra la imagen de fondo
-        bg_image = self.original_image.resize(
-            (self.window.winfo_width(), self.window.winfo_height()), Image.ANTIALIAS
-        )
-        self.background_image = ImageTk.PhotoImage(bg_image)
-        self.image_label.configure(image=self.background_image)
-
     def on_resize(self, event):
-        # Actualiza la imagen de fondo al cambiar el tamaño de la ventana
-        self.update_image()
+        """Ajusta el tamaño del canvas al cambiar el tamaño de la ventana"""
+        self.canvas.config(width=self.window.winfo_width(), height=self.window.winfo_height())
 
     def add_buttons(self):
         # Añadir botones de ejemplo
-        btn = tk.Button(self.image_label, text="Ejemplo Botón", command=self.some_command)
+        btn = tk.Button(self.canvas, text="Ejemplo Botón", command=self.some_command)
         btn.place(x=50, y=50)  # Posición de ejemplo, puedes ajustarla
 
     def some_command(self):
