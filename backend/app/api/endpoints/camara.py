@@ -6,7 +6,7 @@ from PIL import Image
 import base64
 from io import BytesIO
 from fastapi.responses import JSONResponse
-
+import threading
 router = APIRouter()
 camera_service = CameraService()
 
@@ -57,3 +57,17 @@ async def capturar_iniciar(request: Request):
 async def cerrar_camara():
     camera_service.exit()
     return {"message": "Cámara cerrada y recursos liberados"}
+
+
+# Endpoint para abrir la cámara en una nueva ventana de Tkinter
+@app.get("/abrir-camara")
+def abrir_camara():
+    # Usar un hilo para ejecutar la ventana de Tkinter sin bloquear el servidor FastAPI
+    threading.Thread(target=iniciar_ventana_tk).start()
+    return {"message": "Interfaz de cámara abierta"}
+
+def iniciar_ventana_tk():
+    # Función para iniciar la ventana de Tkinter
+    root = tk.Tk()
+    app = CameraService(root, "Cámara con Tkinter")
+    root.mainloop()
