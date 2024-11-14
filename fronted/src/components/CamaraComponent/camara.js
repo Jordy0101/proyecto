@@ -3,7 +3,7 @@ import React from 'react';
 function CameraControl() {
   const abrirCamara = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:8000/abrir-camara");
+      const response = await fetch("http://127.0.0.1:8000/camera/abrir-camara");
       if (response.ok) {
         console.log("La interfaz de cámara se ha abierto correctamente.");
       } else {
