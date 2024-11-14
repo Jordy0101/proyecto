@@ -1,6 +1,7 @@
 import cv2
 from PIL import Image, ImageTk
 import tkinter as tk
+import threading
 from io import BytesIO
 import base64
 
@@ -26,31 +27,19 @@ class CameraService:
         self.canvas = tk.Label(window)
         self.canvas.place(x=0, y=60)
 
-        # Label con texto de bienvenida
-        screen_width = self.window.winfo_screenwidth()
-        screen_height = self.window.winfo_screenheight()
-        self.text_label = tk.Label(
-            self.image_label,
-            text="Bienvenido a E-Reader",
-            fg="white",
-            bg="black",
-            font=("Arial", 9),
-            wraplength=screen_width / 2.64,
-            justify="left"
-        )
-        self.text_label.place(x=screen_width * 0.6, y=screen_height * 0.23)
-
         # Añadir botones personalizados
         self.add_buttons()
-
-        # Llama a la función de actualización de la cámara
-        self.update_camera_feed()
 
         # Asignar eventos de teclado
         self.window.bind('<Escape>', lambda e: self.exit())
         self.window.bind('<KeyPress>', self.on_key_press)
         self.window.bind("<Configure>", self.on_resize)  # Evento de cambio de tamaño
         self.window.mainloop()
+
+    def start_camera(self):
+        """Este método se encarga de iniciar la interfaz gráfica de la cámara"""
+        # Llama a la función de actualización de la cámara
+        self.update_camera_feed()
 
     def update_camera_feed(self):
         ret, frame = self.vid.read()
@@ -95,8 +84,3 @@ class CameraService:
             self.vid.release()  # Libera la cámara
             print("Cámara cerrada correctamente.")
         self.window.destroy()
-
-# Ejemplo de uso
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = CameraService(root, "Cámara con Tkinter")

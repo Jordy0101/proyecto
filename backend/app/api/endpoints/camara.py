@@ -66,7 +66,8 @@ async def cerrar_camara():
         return {"message": "Cámara cerrada y recursos liberados"}
     return {"message": "La cámara ya estaba cerrada"}
 
-# Endpoint para abrir la cámara en una nueva ventana de Tkinter
+
+
 @router.get("/abrir-camara")
 async def abrir_camara():
     global camera_service
@@ -74,15 +75,11 @@ async def abrir_camara():
         return {"message": "La cámara ya está en ejecución"}
     
     # Iniciar la cámara en un hilo separado para no bloquear FastAPI
-    threading.Thread(target=iniciar_ventana_tk, daemon=True).start()  # Usar daemon=True para que el hilo termine cuando el servidor FastAPI termine
+    def iniciar():
+        window = tk.Tk()
+        global camera_service
+        camera_service = CameraService(window, "Cámara con Tkinter")
+        camera_service.start_camera()
+    
+    threading.Thread(target=iniciar, daemon=True).start()  # Usar daemon=True para que el hilo termine cuando el servidor FastAPI termine
     return {"message": "Interfaz de cámara abierta"}
-
-def iniciar_ventana_tk():
-    # Función para iniciar la ventana de Tkinter sin bloquear FastAPI
-    global camera_service
-    try:
-        root = tk.Tk()
-        camera_service = CameraService(root, "Cámara con Tkinter")
-        root.mainloop()
-    except Exception as e:
-        print(f"Error al iniciar la ventana de Tkinter: {str(e)}")
